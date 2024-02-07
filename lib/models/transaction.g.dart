@@ -17,28 +17,33 @@ const TransactionSchema = CollectionSchema(
   name: r'Transaction',
   id: 5320225499417954855,
   properties: {
-    r'dateTime': PropertySchema(
+    r'bankName': PropertySchema(
       id: 0,
+      name: r'bankName',
+      type: IsarType.string,
+    ),
+    r'dateTime': PropertySchema(
+      id: 1,
       name: r'dateTime',
       type: IsarType.dateTime,
     ),
     r'imagePath': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'imagePath',
       type: IsarType.string,
     ),
     r'income': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'income',
       type: IsarType.long,
     ),
     r'name': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'name',
       type: IsarType.string,
     ),
     r'spending': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'spending',
       type: IsarType.long,
     )
@@ -63,6 +68,7 @@ int _transactionEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.bankName.length * 3;
   bytesCount += 3 + object.imagePath.length * 3;
   bytesCount += 3 + object.name.length * 3;
   return bytesCount;
@@ -74,11 +80,12 @@ void _transactionSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDateTime(offsets[0], object.dateTime);
-  writer.writeString(offsets[1], object.imagePath);
-  writer.writeLong(offsets[2], object.income);
-  writer.writeString(offsets[3], object.name);
-  writer.writeLong(offsets[4], object.spending);
+  writer.writeString(offsets[0], object.bankName);
+  writer.writeDateTime(offsets[1], object.dateTime);
+  writer.writeString(offsets[2], object.imagePath);
+  writer.writeLong(offsets[3], object.income);
+  writer.writeString(offsets[4], object.name);
+  writer.writeLong(offsets[5], object.spending);
 }
 
 Transaction _transactionDeserialize(
@@ -88,11 +95,12 @@ Transaction _transactionDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Transaction(
-    dateTime: reader.readDateTime(offsets[0]),
-    imagePath: reader.readString(offsets[1]),
-    income: reader.readLong(offsets[2]),
-    name: reader.readString(offsets[3]),
-    spending: reader.readLong(offsets[4]),
+    bankName: reader.readString(offsets[0]),
+    dateTime: reader.readDateTime(offsets[1]),
+    imagePath: reader.readString(offsets[2]),
+    income: reader.readLong(offsets[3]),
+    name: reader.readString(offsets[4]),
+    spending: reader.readLong(offsets[5]),
   );
   object.id = id;
   return object;
@@ -106,14 +114,16 @@ P _transactionDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
-    case 3:
       return (reader.readString(offset)) as P;
+    case 3:
+      return (reader.readLong(offset)) as P;
     case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -213,6 +223,141 @@ extension TransactionQueryWhere
 
 extension TransactionQueryFilter
     on QueryBuilder<Transaction, Transaction, QFilterCondition> {
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> bankNameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'bankName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      bankNameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'bankName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      bankNameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'bankName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> bankNameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'bankName',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      bankNameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'bankName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      bankNameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'bankName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      bankNameContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'bankName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition> bankNameMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'bankName',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      bankNameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'bankName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterFilterCondition>
+      bankNameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'bankName',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QAfterFilterCondition> dateTimeEqualTo(
       DateTime value) {
     return QueryBuilder.apply(this, (query) {
@@ -706,6 +851,18 @@ extension TransactionQueryLinks
 
 extension TransactionQuerySortBy
     on QueryBuilder<Transaction, Transaction, QSortBy> {
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByBankName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bankName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByBankNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bankName', Sort.desc);
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QAfterSortBy> sortByDateTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dateTime', Sort.asc);
@@ -769,6 +926,18 @@ extension TransactionQuerySortBy
 
 extension TransactionQuerySortThenBy
     on QueryBuilder<Transaction, Transaction, QSortThenBy> {
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByBankName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bankName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByBankNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bankName', Sort.desc);
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QAfterSortBy> thenByDateTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dateTime', Sort.asc);
@@ -844,6 +1013,13 @@ extension TransactionQuerySortThenBy
 
 extension TransactionQueryWhereDistinct
     on QueryBuilder<Transaction, Transaction, QDistinct> {
+  QueryBuilder<Transaction, Transaction, QDistinct> distinctByBankName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'bankName', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Transaction, Transaction, QDistinct> distinctByDateTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dateTime');
@@ -882,6 +1058,12 @@ extension TransactionQueryProperty
   QueryBuilder<Transaction, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Transaction, String, QQueryOperations> bankNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'bankName');
     });
   }
 
