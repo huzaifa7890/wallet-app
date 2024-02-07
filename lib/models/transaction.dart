@@ -9,6 +9,7 @@ class Transaction {
   final int income;
   final int spending;
   final String imagePath;
+  final String bankName;
 
   Transaction({
     required this.name,
@@ -16,5 +17,6 @@ class Transaction {
     required this.income,
     required this.spending,
     required this.imagePath,
+    required this.bankName,
   });
 }

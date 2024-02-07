@@ -15,7 +15,6 @@ class TransactionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isIncome = transaction.income > transaction.spending;
-
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
@@ -49,7 +48,10 @@ class TransactionItem extends StatelessWidget {
                       'Spending: ${transaction.spending}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
-                    // Add more details as needed
+                    Text(
+                      'BankName: ${transaction.bankName}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   ],
                 ),
               ),
