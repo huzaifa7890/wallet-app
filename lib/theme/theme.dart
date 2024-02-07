@@ -59,11 +59,11 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        visualDensity: const VisualDensity(
-          vertical: -4,
-          horizontal: -4,
-        ),
-        padding: EdgeInsets.zero,
+        // visualDensity: const VisualDensity(
+        //   vertical: -4,
+        //   horizontal: -4,
+        // ),
+        padding: const EdgeInsets.all(8.0),
         elevation: 3,
       ),
     ),
@@ -106,21 +106,21 @@ class AppTheme {
     ),
     textTheme: AppTextTheme.textTheme(AppColorSchemes.darkColorScheme),
     scaffoldBackgroundColor: AppColorSchemes.darkColorScheme.primary,
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        elevation: 3,
-        backgroundColor: AppColorSchemes.lightColorScheme.primaryContainer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        visualDensity: const VisualDensity(
-          vertical: -4,
-          horizontal: -4,
-        ),
-        padding: EdgeInsets.zero,
-        shadowColor: const Color.fromARGB(213, 153, 150, 150),
-      ),
-    ),
+    // elevatedButtonTheme: ElevatedButtonThemeData(
+    //   style: ElevatedButton.styleFrom(
+    //     elevation: 3,
+    //     backgroundColor: AppColorSchemes.lightColorScheme.primaryContainer,
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(12),
+    //     ),
+    //     visualDensity: const VisualDensity(
+    //       vertical: -4,
+    //       horizontal: -4,
+    //     ),
+    //     padding: EdgeInsets.zero,
+    //     shadowColor: const Color.fromARGB(213, 153, 150, 150),
+    //   ),
+    // ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       splashColor: AppColor.darkGrey,
     ),

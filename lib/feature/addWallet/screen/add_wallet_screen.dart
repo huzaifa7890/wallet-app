@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:walletapp/models/transaction.dart';
+import 'package:walletapp/provider/card_provider.dart';
 import 'package:walletapp/provider/transaction_provider.dart';
 
 class AddWalletScreen extends ConsumerStatefulWidget {
@@ -13,14 +16,30 @@ class AddWalletScreen extends ConsumerStatefulWidget {
 
 class _AddWalletScreenState extends ConsumerState<AddWalletScreen> {
   bool showTransactionFields = false;
-  late String selectedImagePath;
+  late String selectedImagePath = '';
   DateTime selectedDate = DateTime.now();
   final _nameController = TextEditingController();
   final _incomeController = TextEditingController();
   final _spendingController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(cardProvider.notifier).fetchCard();
+      final cards = ref.read(cardProvider);
+      if (cards.isNotEmpty) {
+        final defaultBankName = cards.first.bankName;
+        ref.read(selectedBankNameProvider.notifier).state = defaultBankName;
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final cards = ref.watch(cardProvider);
+    final bankNames = cards.map((card) => card.bankName).toSet().toList();
+    final theme = Theme.of(context);
     Future<void> pickImage() async {
       final picker = ImagePicker();
       final pickedFile = await picker.pickImage(source: ImageSource.camera);
@@ -31,48 +50,6 @@ class _AddWalletScreenState extends ConsumerState<AddWalletScreen> {
         setState(() {
           selectedImagePath = imagePath;
         });
-      }
-    }
-
-    final transactionsNotifier = ref.read(transactionsProvider.notifier);
-
-    Future<void> addTransaction() async {
-      final name = _nameController.text;
-      final income = int.tryParse(_incomeController.text);
-      final spending = int.tryParse(_spendingController.text);
-
-      if (income != null && spending != null) {
-        final transaction = Transaction(
-          name: name,
-          dateTime: selectedDate,
-          income: income,
-          spending: spending,
-          imagePath: selectedImagePath,
-        );
-        try {
-          await transactionsNotifier.addTransaction(transaction);
-          _nameController.clear();
-          _incomeController.clear();
-          _spendingController.clear();
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Transaction added successfully!',
-                style: TextStyle(color: Colors.amber),
-              ),
-            ),
-          );
-        } catch (error) {
-          // Handle database errors
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error adding transaction')),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please fill in all fields')),
-        );
       }
     }
 
@@ -93,70 +70,130 @@ class _AddWalletScreenState extends ConsumerState<AddWalletScreen> {
     }
 
     return Scaffold(
+      backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
-        title: const Text('Transaction Screen'),
+        title: Text(
+          'Transaction Screen',
+          style: theme.textTheme.bodyLarge,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    showTransactionFields = !showTransactionFields;
-                  });
-                },
-                child: const Text('Add Transaction?'),
-              ),
-              if (showTransactionFields)
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 500),
-                  height: showTransactionFields ? 250.0 : 0.0,
-                  child: Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: pickImage,
-                        child: const Text('Pick Image'),
-                      ),
-                      Flexible(
-                        child: TextField(
-                          controller: _nameController,
-                          decoration: InputDecoration(labelText: 'Name'),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => selectDate(context),
-                        child: AbsorbPointer(
-                          child: TextField(
-                            controller: TextEditingController()
-                              ..text =
-                                  "${selectedDate.toLocal()}".split(' ')[0],
-                            decoration:
-                                const InputDecoration(labelText: 'Date'),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        child: TextField(
-                          controller: _incomeController,
-                          decoration: InputDecoration(labelText: 'Income'),
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                      Flexible(
-                        child: TextField(
-                          controller: _spendingController,
-                          decoration: InputDecoration(labelText: 'Spending'),
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                    ],
+              if (selectedImagePath.isEmpty)
+                ElevatedButton(
+                  onPressed: pickImage,
+                  child: Text(
+                    'Pick Image',
+                    style: theme.textTheme.bodyLarge,
                   ),
                 ),
+              selectedImagePath.isNotEmpty
+                  ? CircleAvatar(
+                      radius: 50,
+                      backgroundImage: FileImage(File(selectedImagePath)),
+                    )
+                  : const SizedBox.shrink(),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Name',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GestureDetector(
+                  onTap: () => selectDate(context),
+                  child: AbsorbPointer(
+                    child: TextField(
+                      controller: TextEditingController()
+                        ..text = "${selectedDate.toLocal()}".split(' ')[0],
+                      decoration: const InputDecoration(
+                        labelText: 'Date',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _incomeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Income',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _spendingController,
+                  decoration: const InputDecoration(
+                    labelText: 'Spending',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              Consumer(builder: ((BuildContext context, ref, child) {
+                return DropdownButton<String>(
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      ref.read(selectedBankNameProvider.notifier).state =
+                          newValue;
+                    }
+                  },
+                  value: ref.watch(selectedBankNameProvider),
+                  items:
+                      bankNames.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                    );
+                  }).toList(),
+                );
+              })),
               ElevatedButton(
-                onPressed: addTransaction,
+                onPressed: () {
+                  final name = _nameController.text;
+                  final income = int.tryParse(_incomeController.text);
+                  final spending = int.tryParse(_spendingController.text);
+
+                  if (income != null && spending != null) {
+                    final transaction = Transaction(
+                      name: name,
+                      dateTime: selectedDate,
+                      income: income,
+                      spending: spending,
+                      imagePath: selectedImagePath,
+                      bankName: ref.read(selectedBankNameProvider),
+                    );
+                    ref
+                        .read(transactionsProvider.notifier)
+                        .addTransaction(transaction);
+
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                        'Transaction Added',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      dismissDirection: DismissDirection.down,
+                      duration: const Duration(seconds: 1),
+                    ));
+                  }
+                },
                 child: const Text('Add Transaction'),
               ),
             ],

@@ -50,6 +50,8 @@ dependencies:
   hooks_riverpod: ^2.4.9
   flutter_localizations:
     sdk: flutter
+  flutter_credit_card: ^4.0.1
+  awesome_card: ^1.1.7
 
 dev_dependencies:
   flutter_test:

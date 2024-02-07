@@ -18,7 +18,7 @@ class OnBording extends StatelessWidget {
             padding: REdgeInsets.only(left: 42.sp),
             child: SvgPicture.asset(AppImages.onBording),
           ),
-          SizedBox(height: 40.h),
+          Expanded(child: SizedBox(height: 40.h)),
           Text(
             'Manage your',
             style: theme.textTheme.titleLarge,
@@ -31,23 +31,26 @@ class OnBording extends StatelessWidget {
             'simply',
             style: theme.textTheme.titleLarge,
           ),
-          SizedBox(height: 40.h),
-          Container(
-            height: 58,
-            width: 58,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: theme.colorScheme.primaryContainer,
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.navigate_next,
-                color: Colors.white,
-                size: 34,
+          Expanded(child: SizedBox(height: 40.h)),
+          Padding(
+            padding: EdgeInsets.only(bottom: 25.h),
+            child: Container(
+              height: 58,
+              width: 58,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: theme.colorScheme.primaryContainer,
               ),
-              onPressed: () {
-                context.push('/auth');
-              },
+              child: IconButton(
+                icon: const Icon(
+                  Icons.navigate_next,
+                  color: Colors.white,
+                  size: 34,
+                ),
+                onPressed: () {
+                  context.push('/auth');
+                },
+              ),
             ),
           ),
         ],
