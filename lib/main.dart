@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,11 +7,15 @@ import 'package:walletapp/core/isar.dart';
 import 'package:walletapp/core/language_repo.dart';
 import 'package:walletapp/core/language.dart';
 import 'package:walletapp/core/theme_data.dart';
+import 'package:walletapp/firebase_options.dart';
 import 'package:walletapp/theme/theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   final router = AppRoutes().router;
   final isar = await isarInitialize();
   final container = ProviderContainer();

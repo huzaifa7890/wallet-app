@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:walletapp/feature/transaction/widgets/transaction_filters.dart';
 import 'package:walletapp/feature/transaction/widgets/transactions_item.dart';
 import 'package:walletapp/provider/transaction_provider.dart';
@@ -30,7 +31,6 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         .watch(filteredTransactionsProvider.notifier)
         .filterAndGroupTransactions();
     final theme = Theme.of(context);
-
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: theme.colorScheme.background,
@@ -59,7 +59,10 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      _scaffoldKey.currentState?.openEndDrawer();
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (_) => const TransactionFilter(),
+                      );
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -76,6 +79,20 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
                 ],
               ),
             ),
+            if (groupedTransactions.isEmpty)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "No Transaction Available",
+                      style: theme.textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
             for (var date in groupedTransactions.keys)
               Padding(
                 padding: EdgeInsets.only(left: 20.w, top: 10.h),
@@ -83,20 +100,18 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      date,
+                      DateFormat('dd MMM yyyy').format(DateTime.parse(date)),
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(color: Colors.black),
                     ),
-                    ...groupedTransactions[date]!.map((transaction) {
-                      return TransactionItem(transaction: transaction);
-                    }),
+                    for (var transaction in groupedTransactions[date]!)
+                      TransactionItem(transaction: transaction),
                   ],
                 ),
               ),
           ],
         ),
       ),
-      endDrawer: TransactionFilter(),
     );
   }
 }

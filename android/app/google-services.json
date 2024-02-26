@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "434521031425",
+    "project_id": "appstreewalletapp",
+    "storage_bucket": "appstreewalletapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434521031425:android:af575c4869e1a387f19100",
+        "android_client_info": {
+          "package_name": "com.example.walletapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFY9lOL4O5hbFcP7m_f9mVrT6nyLHWIzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -27,6 +27,7 @@ class FilteredTransactionsNotifier extends Notifier<List<Transaction>> {
     final filter = ref.read(selectedFilterProvider);
 
     final filteredTransactions = filterTransactions(transactions, filter);
+    filteredTransactions.sort((a, b) => b.dateTime.compareTo(a.dateTime));
 
     final dateViseTransactions = <String, List<Transaction>>{};
     for (var transaction in filteredTransactions) {
@@ -54,6 +55,8 @@ class FilteredTransactionsNotifier extends Notifier<List<Transaction>> {
       return transactions
           .where((transaction) => isThisYear(transaction.dateTime))
           .toList();
+    } else if (filter == 'All') {
+      return transactions;
     } else {
       state = transactions;
       return transactions;

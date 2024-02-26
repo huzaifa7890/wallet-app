@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:walletapp/feature/cards/widgets/card_dialogue.dart';
 import 'package:walletapp/feature/cards/widgets/card_item.dart';
 import 'package:walletapp/models/card.dart';
@@ -35,7 +36,14 @@ class _CardScreenState extends ConsumerState<CardScreen> {
               itemBuilder: (BuildContext context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: CardItem(card: cards[index]),
+                  child: GestureDetector(
+                    onTap: () {
+                      context.push('/card-details/${cards[index].id}');
+                    },
+                    child: CardItem(
+                      card: cards[index],
+                    ),
+                  ),
                 );
               },
             ),
@@ -51,7 +59,7 @@ class _CardScreenState extends ConsumerState<CardScreen> {
             },
             child: Text(
               'Add Card',
-              style: theme.textTheme.bodySmall,
+              style: theme.textTheme.bodyMedium,
             ),
           ),
         ],

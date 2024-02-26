@@ -48,7 +48,7 @@ class OnBording extends StatelessWidget {
                   size: 34,
                 ),
                 onPressed: () {
-                  context.push('/auth');
+                  context.go('/auth');
                 },
               ),
             ),
