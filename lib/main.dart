@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:walletapp/constant/routes.dart';
 import 'package:walletapp/core/isar.dart';
 import 'package:walletapp/core/language_repo.dart';
@@ -33,9 +34,9 @@ Future<void> main() async {
 }
 
 class MyApp extends ConsumerWidget {
-  final router;
+  final GoRouter router;
 
-  const MyApp({super.key, this.router});
+  const MyApp({super.key, required this.router});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
