@@ -1,6 +1,6 @@
 # walletapp
 
-A new Flutter project.
+This app is compatible with both Android and iOS platforms.
 
 # Features Of this App
 
